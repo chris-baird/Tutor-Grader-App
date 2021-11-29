@@ -11,30 +11,29 @@
 </head>
 
 <body class="bg-light container">
-    <header>
+    <header class="mt-5">
         <h2 class="text-center">Tutor App</h2>
         <h1 id="todays-date" class="text-center">November 28th 2021, 9:54:46 pm</h1>
     </header>
     <hr>
     <section class="row">
-
         <nav class="col-xs-12 col-sm-12 col-md-3 col-lg-3 mt-5 order-2 order-xs-2 order-sm-2 order-md-1 order-lg-1">
             <ul class="row mx-auto bg-dark p-0">
                 <div class="mb-2 mt-3">
                     <li id="add-booked-session" class="text-center col-12 btn btn-success">Add Booked Session</li>
                 </div>
                 <div class="mb-2">
-                    <li id="complete-tutor-session" class="text-center col-12 btn btn-info">Complete Tutor Session</li>
+                    <li id="complete-tutor-session" class="text-center col-12 btn btn-info">Log Tutor Hour</li>
                 </div>
                 <div class="mb-2">
-                    <li id="complete-grading-session" class="text-center col-12 btn btn-info">Complete Grading Session
+                    <li id="complete-grading-session" class="text-center col-12 btn btn-info">Log Grading Hour
                     </li>
                 </div>
                 <div class="mb-2">
-                    <li id="set-booked-sessions" class="text-center col-12 btn btn-primary">Setup Week</li>
+                    <li id="set-booked-sessions" class="text-center col-12 btn btn-primary">Setup Weeks Hours</li>
                 </div>
                 <div class="mb-3">
-                    <li id="clear-all-data" class="text-center col-12 btn btn-danger">Clear Week</li>
+                    <li id="clear-all-data" class="text-center col-12 btn btn-danger">Clear All Data</li>
                 </div>
             </ul>
             <section class="bg-dark text-white p-2">
@@ -46,25 +45,28 @@
                     <div class="col-6">
                         <li class="w-100 btn btn-warning">Decrease</li>
                     </div>
-
+                    <div class="col col-xs-12 col-sm-12">
+                        <button class="w-100 btn btn-danger mb-2 mt-2">Clear</button>
+                    </div>
                 </ul>
                 <p>Graded Sessions This Week: <span>82</span></p>
                 <div class="row">
                     <div class="col col-xs-12 col-sm-12">
-                        <button class="w-100 btn btn-danger mb-2">Clear</button>
+                        <button class="w-100 btn btn-danger mb-2">Reset</button>
                     </div>
                 </div>
             </section>
         </nav>
-        <main class="mt-5 col-xs-12 col-sm-12 col-md-8 col-lg-9 text-white order-1 order-xs-1 order-sm-1 order-md-2 order-lg-2">
+        <main
+            class="mt-5 col-xs-12 col-sm-12 col-md-8 col-lg-9 text-white order-1 order-xs-1 order-sm-1 order-md-2 order-lg-2">
             <div class="row bg-dark p-2">
                 <h3 class="m-0 p-0 mb-4 mt-1">Tutoring</h3>
                 <table class="table table-sm text-white">
                     <thead>
                         <tr>
-                            <th scope="col">Tutor Sessions Booked This Week</th>
-                            <th scope="col">Tutor Sessions Complete This Week</th>
-                            <th scope="col">Tutor Sessions Left This Week</th>
+                            <th scope="col">Booked This Week</th>
+                            <th scope="col">Complete This Week</th>
+                            <th scope="col">Remaining This Week</th>
                         </tr>
                     </thead>
                     <div class="table-responsive">
@@ -79,7 +81,6 @@
                                 <td>
                                     <p id="tutor-sessions-left" class=""></p>
                                 </td>
-                                <!-- <td><p id="weekly-total-hours"class="text-center"></p></td> -->
                             </tr>
                         </tbody>
                 </table>
@@ -88,9 +89,9 @@
                     <thead>
                         <tr>
 
-                            <th scope="col">Grading Sessions Needed This Week</th>
-                            <th scope="col">Grading Sessions Complete This Week</th>
-                            <th scope="col">Grading Left This Week</th>
+                            <th scope="col">Needed This Week</th>
+                            <th scope="col">Complete This Week</th>
+                            <th scope="col">Grading Hours Per Day</th>
                         </tr>
                     </thead>
                     <div class="table-responsive">
@@ -103,7 +104,7 @@
                                     <p id="complete-grading-sessions" class=""></p>
                                 </td>
                                 <td>
-                                    <p id="grading-sessions-left" class=""></p>
+                                    <p id="grading-hours-per-day" class=""></p>
                                 </td>
                             </tr>
                         </tbody>
@@ -112,9 +113,9 @@
                 <table class="table table-sm text-white">
                     <thead>
                         <tr>
-                            <th scope="col">Regular</th>
-                            <th scope="col">Overtime</th>
-
+                            <th scope="col">Regular Hours</th>
+                            <th scope="col">Overtime Hours</th>
+                           
                         </tr>
                     </thead>
                     <div class="table-responsive">
@@ -126,75 +127,13 @@
                                 <td>
                                     <p id="weekly-ovetime-hours" class=""></p>
                                 </td>
+                                
                             </tr>
                         </tbody>
                 </table>
             </div>
-
-            <!-- <section class="col-4">
-                <div class="card m-2">
-                    <h4 class="text-center">Tutor Sessions Booked This Week</h4>
-                    <p id="booked-sessions" class="text-center"></p>
-                    <button id="add-booked-session" class="btn btn-success">Add Booked Session</button>
-                </div>
-            </section>
-            <section class="col-4">
-                <div class="card m-2">
-                    <h4 class="text-center">Tutor Sessions Complete This Week</h4>
-                    <p id="complete-tutor-sessions" class="text-center"></p>
-                    <button id="complete-tutor-session" class="btn btn-info">Complete Tutor Session</button>
-                </div>
-            </section>
-            <section class="col-4">
-                <div class="card m-2">
-                    <h4 class="text-center">Tutor Sessions Left This Week</h4>
-                    <p id="tutor-sessions-left" class="text-center"></p>
-                </div>
-            </section>
-            <section class="col-4">
-                <div class="card m-2">
-                    <h4 class="text-center">Grading Sessions Needed This Week</h4>
-                    <p id="graded-sessions-needed" class="text-center"></p>
-                </div>
-            </section>
-            <section class="col-4">
-                <div class="card m-2">
-                    <h4 class="text-center">Grading Sessions Complete This Week</h4>
-                    <p id="complete-grading-sessions" class="text-center"></p>
-                    <button id ="complete-grading-session" class="btn btn-info">Complete Grading Session</button>
-                </div>
-            </section>
-            <section class="col-4">
-                <div class="card m-2">
-                    <h4 class="text-center">Grading Left This Week</h4>
-                    <p id="grading-sessions-left" class="text-center"></p>
-                </div>
-            </section>
-            <section class="col-4">
-                <div class="card m-2">
-                    <h4 class="text-center">Weekly Total Hours</h4>
-                    <p id="weekly-total-hours"class="text-center"></p>
-                </div>
-            </section>
-    
-            <section class="col-4">
-                <div class="card m-2">
-                    <h4 class="text-center">Homeworks Graded This Session</h4>
-                    <p class="text-center"></p>
-                    <button class="btn btn-light mb-2">Increment</button>
-                    <button class="btn btn-info">Clear</button>
-                </div>
-            </section>
-            <section class="col-4">
-                <div class="card m-2">
-                    <h4 class="text-center">Homeworks Graded This Week</h3>
-                    <p class="text-center"></p>
-                    <button class="btn btn-danger">Clear</button>
-                </div>
-            </section> -->
         </main>
     </section>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"
         integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
