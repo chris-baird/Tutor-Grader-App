@@ -1,148 +1,146 @@
-<!DOCTYPE html>
-<html lang="en">
+window.onload = () => {
+     clock(renderDisplay(retrieveStorage()))
+     return setTimeout(() => {
+        document.getElementById("loading-spinner").classList.remove('spinner-border')
+     },1000) 
+}
+function retrieveStorage() {
+    let storage = JSON.parse(localStorage.getItem('appData')) || { bookedTutorSessios: 0, completedTutorSessions: 0, gradingSessionsNeeded: 30, gradingSessionsComplete: 0, weeklyHourlyTotal: 0, homeWorksGradedThisSession: 0, homeworksGradedThisWeek: 0 }
+    return storage
+}
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tutor App</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-</head>
+function clock() {
+    setInterval(() => {
+        document.getElementById("todays-date").innerText = moment().format('MMMM Do YYYY, h:mm:ss a')
+    }, 1000);
+}
 
-<body class="bg-light container">
-    <header class="mt-5">
-        <h2 class="text-center">Tutor App</h2>
-        <p class="text-center">Welcome Chris</p>
-        <div id="loading-spinner" class="d-block mx-auto spinner-border text-primary" role="status"></div>
-        <h1 id="todays-date" class="text-center"></h1>
-    </header>
-    <hr>
-    <section class="row">
-        <nav class="col-xs-12 col-sm-12 col-md-3 col-lg-3 mt-5 order-2 order-xs-2 order-sm-2 order-md-1 order-lg-1">
-            <ul class="row mx-auto bg-dark p-0">
-                <div class="mb-2 mt-3">
-                    <li id="add-booked-session" class="text-center col-12 btn btn-success">Add Booked Session</li>
-                </div>
-                <div class="mb-2">
-                    <li id="complete-tutor-session" class="text-center col-12 btn btn-info">Log Tutor Hour</li>
-                </div>
-                <div class="mb-2">
-                    <li id="complete-grading-session" class="text-center col-12 btn btn-info">Log Grading Hour
-                    </li>
-                </div>
-                <div class="mb-2">
-                    <li id="set-booked-sessions" class="text-center col-12 btn btn-primary">Setup Weeks Hours</li>
-                </div>
-                <div class="mb-3">
-                    <li id="clear-all-data" class="text-center col-12 btn btn-danger">Clear All Data</li>
-                </div>
-            </ul>
-            <section class="bg-dark text-white p-2">
-                <p>Graded Sessions This Session: <span>0</span></p>
-                <ul class="row w-100 mr-1">
-                    <div class="col-6">
-                        <li class="w-100 btn btn-success">Increase</li>
-                    </div>
-                    <div class="col-6">
-                        <li class="w-100 btn btn-warning">Decrease</li>
-                    </div>
-                    <div class="col col-xs-12 col-sm-12">
-                        <button class="w-100 btn btn-danger mb-2 mt-2">Clear</button>
-                    </div>
-                </ul>
-                <p>Graded Sessions This Week: <span>0</span></p>
-                <div class="row">
-                    <div class="col col-xs-12 col-sm-12">
-                        <button class="w-100 btn btn-danger mb-2">Reset</button>
-                    </div>
-                </div>
-            </section>
-        </nav>
-        <main
-            class="mt-5 col-xs-12 col-sm-12 col-md-8 col-lg-9 text-white order-1 order-xs-1 order-sm-1 order-md-2 order-lg-2">
-            <div class="row bg-dark p-4">
-                <h3 class="m-0 p-0 mb-4 mt-1">Tutoring</h3>
-                <table class="table table-sm text-white">
-                    <thead>
-                        <tr>
-                            <th scope="col">Booked This Week</th>
-                            <th scope="col">Complete This Week</th>
-                            <th scope="col">Remaining This Week</th>
-                        </tr>
-                    </thead>
-                    <div class="table-responsive">
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <p><span id="booked-sessions" class=""></span> sessions</p>
-                                </td>
-                                <td class="col">
-                                    <p><span id="complete-tutor-sessions" class=""></span> sessions</p>
-                                </td>
-                                <td>
-                                    <p><span id="tutor-sessions-left" class=""></span> sessions</p>
-                                </td>
-                            </tr>
-                        </tbody>
-                </table>
-                <h3 class="m-0 p-0 mb-4">Grading</h3>
-                <table class="table table-sm text-white">
-                    <thead>
-                        <tr>
+function setUpWeek() {
+    // TODO number at least 1 less than or equal to 30 and of type number
+    let numberOfBookedSessions
+    do {
+        numberOfBookedSessions = parseInt(prompt("How Many Sessions Are Booked This Week?"))
+    } while (!numberOfBookedSessions || numberOfBookedSessions === NaN || numberOfBookedSessions < 1 || numberOfBookedSessions > 30)
+    return numberOfBookedSessions
+}
 
-                            <th scope="col">Needed This Week</th>
-                            <th scope="col">Complete This Week</th>
-                            <th scope="col">Grading Hours Needed Per Day</th>
-                        </tr>
-                    </thead>
-                    <div class="table-responsive">
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <p><span id="graded-sessions-needed" class=""></span> hours</p>
-                                </td>
-                                <td>
-                                    <p><span id="complete-grading-sessions" class=""></span> hours</p>
-                                </td>
-                                <td>
-                                    <p><span id="grading-hours-per-day" class=""></span> hours</p>
-                                </td>
-                            </tr>
-                        </tbody>
-                </table>
-                <h3 class="m-0 p-0 mb-4">Weekly Totals</h3>
-                <table class="table table-sm text-white">
-                    <thead>
-                        <tr>
-                            <th scope="col">Regular Hours</th>
-                            <th scope="col">Overtime Hours</th>
-                        </tr>
-                    </thead>
-                    <div class="table-responsive">
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <p><span id="weekly-total-hours" class=""></span> hours</p>
-                                </td>
-                                <td>
-                                    <p><span id="weekly-ovetime-hours" class=""></span> hours</p>
-                                </td>
-                                
-                            </tr>
-                        </tbody>
-                </table>
-            </div>
-        </main>
-    </section>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"
-        integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-        crossorigin="anonymous"></script>
-    <script src="./assets/constants.js"></script>
-    <script src="./assets/app.js"></script>
-</body>
+function calculateAvgGradingHoursPerDay(gradingHours) {
+    let day = moment().day()    
+    let gradingHoursPerDay
+    if (day === 1) {
+        gradingHoursPerDay = gradingHours / 7
+    }
+    if (day === 2) {
+        gradingHoursPerDay = gradingHours / 6
+    }
+    if (day === 3) {
+        gradingHoursPerDay = gradingHours / 5
+    }
+    if (day === 4) {
+        gradingHoursPerDay = gradingHours / 4
+    }
+    if (day === 5) {
+        gradingHoursPerDay = gradingHours / 3
+    }
+    if (day === 6) {
+        gradingHoursPerDay = gradingHours / 2
+    }
+    if (day === 7) {
+        gradingHoursPerDay = gradingHours / 1
+    }
+    return gradingHoursPerDay.toFixed(1)
+}
 
-</html>
+function updateData() {
+
+}
+
+function saveStorage(data) {
+    localStorage.setItem('appData', JSON.stringify(data))
+}
+
+function stateReducer(state = { bookedTutorSessios: 0, completedTutorSessions: 0, gradingSessionsNeeded: 30, gradingSessionsComplete: 0, weeklyHourlyTotal: 0, homeWorksGradedThisSession: 0, homeworksGradedThisWeek: 0 }, action = {}) {
+    if (action.type === SETUP) {
+        let newState = { ...state, ...action.payload }
+        return newState
+    }
+    if (action.type === ADDTUTORSESSION) {
+        let newState = (state.bookedTutorSessios < 30 ? { ...state, bookedTutorSessios: state.bookedTutorSessios + 1, gradingSessionsNeeded: state.gradingSessionsNeeded - 1 } : state)
+        return newState
+    }
+    if (action.type === COMPLETETUTORSESSION) {
+        let newState = { ...state, completedTutorSessions: state.completedTutorSessions + 1 }
+        return newState
+    }
+    if (action.type === COMPLETEGRADINGSESSION) {
+        let newState = { ...state, gradingSessionsComplete: state.gradingSessionsComplete + 1 }
+        return newState
+    }
+
+    return state
+}
+
+
+function renderDisplay(data) {
+    let displayData = (!data ? stateReducer() : data)
+    console.log(data)
+
+    document.getElementById("booked-sessions").innerText = displayData.bookedTutorSessios
+
+    document.getElementById("tutor-sessions-left").innerText = (displayData.bookedTutorSessios - displayData.completedTutorSessions > 0 ? displayData.bookedTutorSessios - displayData.completedTutorSessions : 0)
+
+    document.getElementById("graded-sessions-needed").innerText = displayData.gradingSessionsNeeded
+
+    document.getElementById("weekly-total-hours").innerText = displayData.completedTutorSessions + displayData.gradingSessionsComplete
+
+    document.getElementById("complete-grading-sessions").innerText = displayData.gradingSessionsComplete
+
+    document.getElementById("complete-tutor-sessions").innerText = displayData.completedTutorSessions
+    console.log(displayData.gradingSessionsComplete);
+    console.log(displayData.gradingSessionsNeeded);
+    document.getElementById("grading-hours-per-day").innerText = calculateAvgGradingHoursPerDay(displayData.gradingSessionsNeeded - displayData.gradingSessionsComplete)
+
+    document.getElementById("weekly-ovetime-hours").innerText = (displayData.completedTutorSessions + displayData.gradingSessionsComplete > 30 ? displayData.completedTutorSessions + displayData.gradingSessionsComplete - 30 : 0)
+
+    return displayData
+}
+
+document.getElementById("set-booked-sessions").addEventListener("click", () => {
+    // Function pipeline for setting the number of sesions for the week
+    let setup = setUpWeek()
+    console.log(setup)
+    return saveStorage(renderDisplay(stateReducer(retrieveStorage(), { type: SETUP, payload: { bookedTutorSessios: setup, gradingSessionsNeeded: 30 - setup  } })))
+})
+
+document.getElementById("add-booked-session").addEventListener('click', () => {
+    return saveStorage(renderDisplay(stateReducer(retrieveStorage(), { type: ADDTUTORSESSION })))
+})
+
+document.getElementById("complete-tutor-session").addEventListener("click", () => {
+    return saveStorage(renderDisplay(stateReducer(retrieveStorage(), { type: COMPLETETUTORSESSION })))
+})
+
+document.getElementById("complete-grading-session").addEventListener("click", () => {
+    return saveStorage(renderDisplay(stateReducer(retrieveStorage(), { type: COMPLETEGRADINGSESSION })))
+})
+
+document.getElementById('clear-all-data').addEventListener("click", () => {
+    localStorage.clear()
+    return renderDisplay(retrieveStorage())
+})
+
+// When I click the Add Booked Session button
+// Then the booked sessions is increased by one, the grading needed is subtracted by one, and the display is re rendered
+
+//When I click the Complete Grading Session button
+// Then the grading sessions complete this week is increased by one, the grading need is subtracted by one, add one to the total hours for the week and the display is re rendered
+
+// When I click the Complete Tutor Session button
+// Then the completed sesions are increased by one, sessions left is subtracted by one, the total hours is increased by one and the display is re rendered
+
+// When I click the Increment button the Homeworks graded this session is increased by one and the displa is re rendered
+
+// When I click the clear button for the homeworks graded this sessions
+// Then the number is reset back to zero and one is added to Homeworks Graded 
+
+// When the clear button is clicked the homeworks graded is reset back to 0 and the local storage is reset
