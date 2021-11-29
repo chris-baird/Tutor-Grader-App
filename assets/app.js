@@ -1,11 +1,9 @@
 window.onload = () => {
     return clock(renderDisplay(retrieveStorage()))
 }
-
-
-
+console.log(moment().day());
 function retrieveStorage() {
-    let storage = JSON.parse(localStorage.getItem('appData')) || { bookedTutorSessios: 0, completedTutorSessions: 0, gradingSessionsNeeded: 30, gradingSessionsComplete: 0, weeklyHourlyTotal: 0, homeWorksGradedThisSession: 0, homeworksGradedThisWeek: 0 }, action = {}
+    let storage = JSON.parse(localStorage.getItem('appData')) || { bookedTutorSessios: 0, completedTutorSessions: 0, gradingSessionsNeeded: 30, gradingSessionsComplete: 0, weeklyHourlyTotal: 0, homeWorksGradedThisSession: 0, homeworksGradedThisWeek: 0 }
     return storage
 }
 
@@ -24,6 +22,33 @@ function setUpWeek() {
     return numberOfBookedSessions
 }
 
+function calculateAvgGradingHoursPerDay(gradingHours) {
+    let day = moment().day()    
+    let gradingHoursPerDay
+    if (day === 1) {
+        gradingHoursPerDay = gradingHours / 7
+    }
+    if (day === 2) {
+        gradingHoursPerDay = gradingHours / 6
+    }
+    if (day === 3) {
+        gradingHoursPerDay = gradingHours / 5
+    }
+    if (day === 4) {
+        gradingHoursPerDay = gradingHours / 4
+    }
+    if (day === 5) {
+        gradingHoursPerDay = gradingHours / 3
+    }
+    if (day === 6) {
+        gradingHoursPerDay = gradingHours / 2
+    }
+    if (day === 7) {
+        gradingHoursPerDay = gradingHours / 1
+    }
+    return gradingHoursPerDay.toFixed(2)
+}
+
 function updateData() {
 
 }
@@ -38,7 +63,7 @@ function stateReducer(state = { bookedTutorSessios: 0, completedTutorSessions: 0
         return newState
     }
     if (action.type === ADDTUTORSESSION) {
-        let newState = (state.bookedTutorSessios < 30 ? { ...state, bookedTutorSessios: state.bookedTutorSessios + 1 } : state)
+        let newState = (state.bookedTutorSessios < 30 ? { ...state, bookedTutorSessios: state.bookedTutorSessios + 1, gradingSessionsNeeded: state.gradingSessionsNeeded - 1 } : state)
         return newState
     }
     if (action.type === COMPLETETUTORSESSION) {
@@ -56,20 +81,22 @@ function stateReducer(state = { bookedTutorSessios: 0, completedTutorSessions: 0
 
 function renderDisplay(data) {
     let displayData = (!data ? stateReducer() : data)
+    console.log(data)
 
     document.getElementById("booked-sessions").innerText = displayData.bookedTutorSessios
 
     document.getElementById("tutor-sessions-left").innerText = (displayData.bookedTutorSessios - displayData.completedTutorSessions > 0 ? displayData.bookedTutorSessios - displayData.completedTutorSessions : 0)
 
-    document.getElementById("graded-sessions-needed").innerText = displayData.gradingSessionsNeeded - displayData.bookedTutorSessios
-
-    document.getElementById("grading-sessions-left").innerText = (displayData.gradingSessionsNeeded - displayData.bookedTutorSessios - displayData.gradingSessionsComplete > 0 ? displayData.gradingSessionsNeeded - displayData.bookedTutorSessios - displayData.gradingSessionsComplete: 0) 
+    document.getElementById("graded-sessions-needed").innerText = displayData.gradingSessionsNeeded
 
     document.getElementById("weekly-total-hours").innerText = displayData.completedTutorSessions + displayData.gradingSessionsComplete
 
     document.getElementById("complete-grading-sessions").innerText = displayData.gradingSessionsComplete
 
     document.getElementById("complete-tutor-sessions").innerText = displayData.completedTutorSessions
+    console.log(displayData.gradingSessionsComplete);
+    console.log(displayData.gradingSessionsNeeded);
+    document.getElementById("grading-hours-per-day").innerText = calculateAvgGradingHoursPerDay(displayData.gradingSessionsNeeded - displayData.gradingSessionsComplete)
 
     document.getElementById("weekly-ovetime-hours").innerText = (displayData.completedTutorSessions + displayData.gradingSessionsComplete > 30 ? displayData.completedTutorSessions + displayData.gradingSessionsComplete - 30 : 0)
 
@@ -78,7 +105,9 @@ function renderDisplay(data) {
 
 document.getElementById("set-booked-sessions").addEventListener("click", () => {
     // Function pipeline for setting the number of sesions for the week
-    return saveStorage(renderDisplay(stateReducer(retrieveStorage(), { type: SETUP, payload: { bookedTutorSessios: setUpWeek() } })))
+    let setup = setUpWeek()
+    console.log(setup)
+    return saveStorage(renderDisplay(stateReducer(retrieveStorage(), { type: SETUP, payload: { bookedTutorSessios: setup, gradingSessionsNeeded: 30 - setup  } })))
 })
 
 document.getElementById("add-booked-session").addEventListener('click', () => {
