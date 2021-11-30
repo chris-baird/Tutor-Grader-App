@@ -15,6 +15,10 @@ function clock() {
     }, 1000);
 }
 
+function calculateWeeklyPaycheck(rate,hours) {
+    return rate * hours
+}
+
 function setUpWeek() {
     // TODO number at least 1 less than or equal to 30 and of type number
     let numberOfBookedSessions
@@ -76,6 +80,22 @@ function stateReducer(state = { bookedTutorSessios: 0, completedTutorSessions: 0
         let newState = { ...state, gradingSessionsComplete: state.gradingSessionsComplete + 1 }
         return newState
     }
+    if (action.type === ADDHOMEWORKGRADEDTHISSESSION) {
+        let newState = { ...state, homeWorksGradedThisSession: state.homeWorksGradedThisSession + 1, homeworksGradedThisWeek: state.homeworksGradedThisWeek + 1 }
+        return newState
+    }
+    if (action.type === REMOVEHOMEWORKGRADEDTHISSESSION) {
+        let newState = { ...state, homeWorksGradedThisSession: state.homeWorksGradedThisSession -1, homeworksGradedThisWeek: state.homeworksGradedThisWeek - 1 }
+        return newState
+    }
+    if (action.type === CLEARHOMEWORKGRADEDTHISSESSION) {
+        let newState = { ...state, homeWorksGradedThisSession: 0 }
+        return newState
+    }
+    if (action.type === RESETWEEKLYGRADEDHOMEWORKS) {
+        let newState = { ...state, homeworksGradedThisWeek: 0 }
+        return newState
+    }
 
     return state
 }
@@ -84,6 +104,10 @@ function stateReducer(state = { bookedTutorSessios: 0, completedTutorSessions: 0
 function renderDisplay(data) {
     let displayData = (!data ? stateReducer() : data)
     console.log(data)
+
+    document.getElementById("homeworks-graded-this-week").innerText = displayData.homeworksGradedThisWeek
+
+    document.getElementById("homeworks-graded-this-session").innerText = displayData.homeWorksGradedThisSession
 
     document.getElementById("booked-sessions").innerText = displayData.bookedTutorSessios
 
@@ -102,6 +126,7 @@ function renderDisplay(data) {
 
     document.getElementById("weekly-ovetime-hours").innerText = (displayData.completedTutorSessions + displayData.gradingSessionsComplete > 30 ? displayData.completedTutorSessions + displayData.gradingSessionsComplete - 30 : 0)
 
+    document.getElementById("weekly-estimated-paycheck").innerText = calculateWeeklyPaycheck(30,displayData.completedTutorSessions) + calculateWeeklyPaycheck(20, displayData.gradingSessionsComplete)
     return displayData
 }
 
@@ -127,6 +152,22 @@ document.getElementById("complete-grading-session").addEventListener("click", ()
 document.getElementById('clear-all-data').addEventListener("click", () => {
     localStorage.clear()
     return renderDisplay(retrieveStorage())
+})
+
+document.getElementById("increase-graded-homework").addEventListener("click", () => {
+    return saveStorage(renderDisplay(stateReducer(retrieveStorage(), { type: ADDHOMEWORKGRADEDTHISSESSION })))
+})
+
+document.getElementById("decrease-graded-homework").addEventListener("click", () => {
+    return saveStorage(renderDisplay(stateReducer(retrieveStorage(), { type: REMOVEHOMEWORKGRADEDTHISSESSION })))
+})
+
+document.getElementById("clear-graded-homework").addEventListener("click", () => {
+    return saveStorage(renderDisplay(stateReducer(retrieveStorage(), { type: CLEARHOMEWORKGRADEDTHISSESSION })))
+})
+
+document.getElementById("reset-weekly-graded-homeworks").addEventListener("click", () => {
+    return saveStorage(renderDisplay(stateReducer(retrieveStorage(), { type: RESETWEEKLYGRADEDHOMEWORKS })))
 })
 
 // When I click the Add Booked Session button
