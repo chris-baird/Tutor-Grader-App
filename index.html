@@ -39,22 +39,22 @@
                 </div>
             </ul>
             <section class="bg-dark text-white p-2">
-                <p>Graded Sessions This Session: <span>0</span></p>
+                <p>Graded Homeworks This Session: <span id="homeworks-graded-this-session">0</span></p>
                 <ul class="row w-100 mr-1">
                     <div class="col-6">
-                        <li class="w-100 btn btn-success">Increase</li>
+                        <li id="increase-graded-homework" class="w-100 btn btn-success">Increase</li>
                     </div>
                     <div class="col-6">
-                        <li class="w-100 btn btn-warning">Decrease</li>
+                        <li id="decrease-graded-homework" class="w-100 btn btn-warning">Decrease</li>
                     </div>
                     <div class="col col-xs-12 col-sm-12">
-                        <button class="w-100 btn btn-danger mb-2 mt-2">Clear</button>
+                        <button id="clear-graded-homework" class="w-100 btn btn-danger mb-2 mt-2">Clear</button>
                     </div>
                 </ul>
-                <p>Graded Sessions This Week: <span>0</span></p>
+                <p>Graded Homeworks This Week: <span id="homeworks-graded-this-week">0</span></p>
                 <div class="row">
                     <div class="col col-xs-12 col-sm-12">
-                        <button class="w-100 btn btn-danger mb-2">Reset</button>
+                        <button id="reset-weekly-graded-homeworks" class="w-100 btn btn-danger mb-2">Reset</button>
                     </div>
                 </div>
             </section>
@@ -117,6 +117,7 @@
                         <tr>
                             <th scope="col">Regular Hours</th>
                             <th scope="col">Overtime Hours</th>
+                            <th scope="col">Estimated Weekly Paycheck</th>
                         </tr>
                     </thead>
                     <div class="table-responsive">
@@ -128,7 +129,9 @@
                                 <td>
                                     <p><span id="weekly-ovetime-hours" class=""></span> hours</p>
                                 </td>
-                                
+                                <td>
+                                    <p>$ <span id="weekly-estimated-paycheck" class="">0</span></p>
+                                </td>
                             </tr>
                         </tbody>
                 </table>
