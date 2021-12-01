@@ -20,11 +20,10 @@ function calculateWeeklyPaycheck(rate,hours) {
 }
 
 function setUpWeek() {
-    // TODO number at least 1 less than or equal to 30 and of type number
     let numberOfBookedSessions
     do {
         numberOfBookedSessions = parseInt(prompt("How Many Sessions Are Booked This Week?"))
-    } while (!numberOfBookedSessions || numberOfBookedSessions === NaN || numberOfBookedSessions < 1 || numberOfBookedSessions > 30)
+    } while (!numberOfBookedSessions || numberOfBookedSessions === NaN || numberOfBookedSessions < 0 || numberOfBookedSessions > 30)
     return numberOfBookedSessions
 }
 
@@ -72,8 +71,17 @@ function stateReducer(state = { bookedTutorSessios: 0, completedTutorSessions: 0
         let newState = (state.bookedTutorSessios < 30 ? { ...state, bookedTutorSessios: state.bookedTutorSessios + 1, gradingSessionsNeeded: state.gradingSessionsNeeded - 1 } : state)
         return newState
     }
-    if (action.type === COMPLETETUTORSESSION) {
+    if (action.type === REMOVETUTORSESSION) {
+        console.log('inside');
+        let newState = (state.bookedTutorSessios > 0 ? { ...state, bookedTutorSessios: state.bookedTutorSessios - 1, gradingSessionsNeeded: state.gradingSessionsNeeded + 1 } : state)
+        return newState
+    }
+    if (action.type === ADDCOMPLETEDTUTORSESSION) {
         let newState = { ...state, completedTutorSessions: state.completedTutorSessions + 1 }
+        return newState
+    }
+    if (action.type === UNDOCOMPLETETUTORSESSION) {
+        let newState = ( state.completedTutorSessions > 0 ? { ...state, completedTutorSessions: state.completedTutorSessions - 1 }:state)
         return newState
     }
     if (action.type === COMPLETEGRADINGSESSION) {
@@ -103,7 +111,6 @@ function stateReducer(state = { bookedTutorSessios: 0, completedTutorSessions: 0
 
 function renderDisplay(data) {
     let displayData = (!data ? stateReducer() : data)
-    console.log(data)
 
     document.getElementById("homeworks-graded-this-week").innerText = displayData.homeworksGradedThisWeek
 
@@ -120,8 +127,6 @@ function renderDisplay(data) {
     document.getElementById("complete-grading-sessions").innerText = displayData.gradingSessionsComplete
 
     document.getElementById("complete-tutor-sessions").innerText = displayData.completedTutorSessions
-    console.log(displayData.gradingSessionsComplete);
-    console.log(displayData.gradingSessionsNeeded);
     document.getElementById("grading-hours-per-day").innerText = calculateAvgGradingHoursPerDay(displayData.gradingSessionsNeeded - displayData.gradingSessionsComplete)
 
     document.getElementById("weekly-ovetime-hours").innerText = (displayData.completedTutorSessions + displayData.gradingSessionsComplete > 30 ? displayData.completedTutorSessions + displayData.gradingSessionsComplete - 30 : 0)
@@ -130,15 +135,41 @@ function renderDisplay(data) {
     return displayData
 }
 
+function deleteAllData() {
+    if(confirm("Are you sure? This can not be undone")) {
+        localStorage.clear()
+        renderDisplay(retrieveStorage())
+    }
+}
+
+function resetWeeklyHomeworkCount() {
+    if(confirm("Are you sure? This can not be undone")) {    
+        saveStorage(renderDisplay(stateReducer(retrieveStorage(), { type: RESETWEEKLYGRADEDHOMEWORKS })))
+    }
+    return
+}
+
 document.getElementById("set-booked-sessions").addEventListener("click", () => {
-    // Function pipeline for setting the number of sesions for the week
     let setup = setUpWeek()
-    console.log(setup)
     return saveStorage(renderDisplay(stateReducer(retrieveStorage(), { type: SETUP, payload: { bookedTutorSessios: setup, gradingSessionsNeeded: 30 - setup  } })))
 })
 
 document.getElementById("add-booked-session").addEventListener('click', () => {
     return saveStorage(renderDisplay(stateReducer(retrieveStorage(), { type: ADDTUTORSESSION })))
+})
+
+document.getElementById("remove-booked-session").addEventListener('click', () => {
+    return saveStorage(renderDisplay(stateReducer(retrieveStorage(), { type: REMOVETUTORSESSION })))
+})
+
+document.getElementById("add-completed-session").addEventListener('click', () => {
+    console.log('inside');
+    return saveStorage(renderDisplay(stateReducer(retrieveStorage(), { type: ADDCOMPLETEDTUTORSESSION })))
+})
+
+document.getElementById("undo-completed-session").addEventListener('click', () => {
+    console.log('inside');
+    return saveStorage(renderDisplay(stateReducer(retrieveStorage(), { type: UNDOCOMPLETETUTORSESSION })))
 })
 
 document.getElementById("complete-tutor-session").addEventListener("click", () => {
@@ -149,10 +180,7 @@ document.getElementById("complete-grading-session").addEventListener("click", ()
     return saveStorage(renderDisplay(stateReducer(retrieveStorage(), { type: COMPLETEGRADINGSESSION })))
 })
 
-document.getElementById('clear-all-data').addEventListener("click", () => {
-    localStorage.clear()
-    return renderDisplay(retrieveStorage())
-})
+document.getElementById('clear-all-data').addEventListener("click", deleteAllData)
 
 document.getElementById("increase-graded-homework").addEventListener("click", () => {
     return saveStorage(renderDisplay(stateReducer(retrieveStorage(), { type: ADDHOMEWORKGRADEDTHISSESSION })))
@@ -166,22 +194,4 @@ document.getElementById("clear-graded-homework").addEventListener("click", () =>
     return saveStorage(renderDisplay(stateReducer(retrieveStorage(), { type: CLEARHOMEWORKGRADEDTHISSESSION })))
 })
 
-document.getElementById("reset-weekly-graded-homeworks").addEventListener("click", () => {
-    return saveStorage(renderDisplay(stateReducer(retrieveStorage(), { type: RESETWEEKLYGRADEDHOMEWORKS })))
-})
-
-// When I click the Add Booked Session button
-// Then the booked sessions is increased by one, the grading needed is subtracted by one, and the display is re rendered
-
-//When I click the Complete Grading Session button
-// Then the grading sessions complete this week is increased by one, the grading need is subtracted by one, add one to the total hours for the week and the display is re rendered
-
-// When I click the Complete Tutor Session button
-// Then the completed sesions are increased by one, sessions left is subtracted by one, the total hours is increased by one and the display is re rendered
-
-// When I click the Increment button the Homeworks graded this session is increased by one and the displa is re rendered
-
-// When I click the clear button for the homeworks graded this sessions
-// Then the number is reset back to zero and one is added to Homeworks Graded 
-
-// When the clear button is clicked the homeworks graded is reset back to 0 and the local storage is reset
+document.getElementById("reset-weekly-graded-homeworks").addEventListener("click", resetWeeklyHomeworkCount)
