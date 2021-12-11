@@ -48,7 +48,7 @@ function calculateAvgGradingHoursPerDay(gradingHours) {
     if (day === 6) {
         gradingHoursPerDay = gradingHours / 2
     }
-    if (day === 7) {
+    if (day === 0) {
         gradingHoursPerDay = gradingHours / 1
     }
     return gradingHoursPerDay.toFixed(1)
